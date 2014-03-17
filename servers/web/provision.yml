@@ -1,0 +1,47 @@
+---
+- hosts: web
+  vars_files:
+    - vars.yml
+  gather_facts: true
+
+  tasks:
+
+# PREPARE FOR PROVISIONING
+
+  - include: common/roles/setup.yml
+
+# SERVER SETUP
+
+  - name: install the EPEL rpm from a remote repo
+    yum: name=http://download-i2.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm state=present
+
+  - name: Install packages unique to mgmt
+    sudo: yes
+    yum: pkg={{ item }} state=installed
+    with_items: ${web_packages}
+
+  #- description: Install "grunt" node.js package globally.
+  #  npm: name=grunt-cli global=yes
+
+  - name: Get grunt from npm
+    sudo: yes
+    shell: npm install -g grunt-cli
+
+  #- description: Install "bower" node.js package globally.
+  #  npm: name=bower global=yes
+
+  - name: Get bower from npm
+    sudo: yes
+    shell: npm install -g bower
+
+  #- description: Install "yeoman" node.js package globally.
+  #  npm: name=yo global=yes
+
+  - name: Get yeoman from npm
+    sudo: yes
+    shell: npm install -g yo
+
+  - name: Get angular from bower
+    sudo: no
+    shell: bower install angular
+

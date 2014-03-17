@@ -1,0 +1,12 @@
+---
+web_packages:
+#updated
+  - gcc
+  - glibc-devel
+  - openssl-devel
+  - libpcap-devel
+  - git
+#installed
+#from EPEL
+  - nodejs
+  - npm

@@ -1,0 +1,7 @@
+---
+# Main deployment playbook. Deploys whole stack of servers.
+
+- include: servers/web/provision.yml
+- include: servers/nfs/provision.yml
+- include: servers/rmq/provision.yml
+- include: servers/sql/provision.yml
