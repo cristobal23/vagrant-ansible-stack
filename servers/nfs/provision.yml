@@ -1,0 +1,73 @@
+---
+- hosts: nfs
+  vars_files:
+    - vars.yml
+  gather_facts: true
+  sudo: true
+
+  tasks:
+
+# PREPARE FOR PROVISIONING
+
+  - include: common/roles/setup.yml
+
+# SERVER SETUP
+
+  - name: Install packages unique to nfs
+    yum: pkg={{ item }} state=installed
+    with_items: ${nfs_packages}
+
+  - name: Create nfs group
+    group: name=nfs gid=$nfs_gid state=present
+    ignore_errors: true
+
+  - name: Add vagrant user to nfs group
+    shell: gpasswd -a vagrant nfs
+    ignore_errors: true
+
+  - name: Ensure ${nfs_export_path} directory exists
+    file: 
+      path=${nfs_export_path} 
+      state=directory
+      owner=vagrant
+      mode=777
+      recurse=yes
+      group=nfs
+
+  - name: Make nfs sub-directories
+    shell: 
+      mkdir -p {{nfs_export_path[0]}}tmp/logs;
+      mkdir -p {{nfs_export_path[0]}}common/files;
+
+  - name: Check if nfs directory exists
+    stat: path=$nfs_export_path
+    register: export_path
+    ignore_errors: true
+
+  - name: Change permissions on nfs export
+    file: 
+      path=${nfs_export_path} 
+      state=directory
+      owner=vagrant
+      mode=777
+      recurse=yes
+      group=nfs
+    when: export_path.stat.exists == true
+    ignore_errors: true
+
+  - name: configure /etc/exports
+    shell: 
+      rm /etc/exports;touch /etc/exports;
+      echo '$nfs_export_path $nfs_client_ip_range(rw,sync,no_subtree_check,no_subtree_check)' | tee -a /etc/exports
+    when: export_path.stat.exists == true
+
+  - name: Make nfs config effective
+    shell: exportfs -a
+
+  - name: Copy /etc/sysconfig/nfs (for static ports)
+    copy: src=files/etc_sysconfig_nfs dest=/etc/sysconfig/nfs
+    ignore_errors: true
+
+  - name: Start nfs services
+    shell: service rpcbind start;service nfslock start;service nfs start 
+    when: export_path.stat.exists == true

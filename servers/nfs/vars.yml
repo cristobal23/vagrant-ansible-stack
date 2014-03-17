@@ -1,0 +1,26 @@
+---
+nfs_packages:
+#updated
+  - gcc
+  - glibc-devel
+  - openssl-devel
+  - libpcap-devel
+#installed
+  - python-devel
+#nfs specific
+  - nfs-utils
+  - nfs-utils-lib
+  - portmap
+nfs_export_path:
+  - /var/nfs/
+nfs_host_ip:
+  - 192.168.56.20
+nfs_client_ip_range:
+  - 192.168.56.0/24
+nfs_subdirs:
+  - tmp
+      - logs
+  - commom
+      - files
+nfs_gid:
+  - 888
