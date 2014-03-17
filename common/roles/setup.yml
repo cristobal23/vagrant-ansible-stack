@@ -1,0 +1,14 @@
+---
+- tasks:
+
+  - name: Disable firewall
+    service: name=iptables state=stopped
+
+  - name: Disable selinux
+    selinux: state=disabled
+
+  - name: Install development tools
+    sudo: yes
+    action: yum name=$item state=latest
+    with_items:
+      - '@development'
