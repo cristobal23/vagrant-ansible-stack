@@ -1,10 +1,12 @@
 ---
-- tasks:
+  # SERVER SETUP
 
   - name: Disable firewall
+    sudo: yes
     service: name=iptables state=stopped
 
   - name: Disable selinux
+    sudo: yes
     selinux: state=disabled
 
   - name: Install development tools

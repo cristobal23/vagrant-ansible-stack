@@ -1,0 +1,46 @@
+---
+- hosts: sql
+  vars_files:
+    - vars.yml
+    - secrets.yml
+  gather_facts: true
+
+  tasks:
+
+# PREPARE FOR PROVISIONING
+
+  - include: common/roles/setup.yml
+
+# SERVER SETUP
+
+  - name: Edit yum configuration files for MariaDB
+    sudo: yes
+    template: src=files/maria_db.repo dest=/etc/yum.repos.d/maria_db.repo
+
+  - name: Install packages unique to sql
+    sudo: yes
+    yum: pkg={{ item }} state=installed
+    with_items: ${sql_packages}
+
+# INSTALL MARIADB PACKAGES
+  - name: Copy python-mysqldb
+    copy: src=files/MySQL-python-1.2.4b4.tar.gz dest=/tmp
+    # version freeze on mysql-python
+
+  - name: Install python-mysqldb
+    script: scripts/install_mysql-python.sh
+
+  - name: Start mariadb sercvice
+    shell: service mysql start
+
+  - name: Configure the root credentials
+    mysql_user: name=root password=$mysql_root_password state=present
+
+  - name: Modify the root credentials
+    mysql_user: name=root password=$mysql_root_password priv=*.*:ALL host=192.168.56.% login_user=root login_password=$mysql_root_password
+
+  - name: Ensure mariadb starts on reboot
+    shell: chkconfig --add mysql;chkconfig --level 345 mysql on
+
+  - name: Restart the MySQL service
+    action: service name=mysql state=restarted

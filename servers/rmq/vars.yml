@@ -1,0 +1,11 @@
+---
+rmq_packages:
+#updated
+  - gcc
+  - glibc-devel
+  - openssl-devel
+  - libpcap-devel
+#installed
+  - python-devel
+rmq_env:
+  ip_rmq: 192.168.56.30

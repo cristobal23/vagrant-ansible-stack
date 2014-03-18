@@ -1,0 +1,14 @@
+---
+sql_packages:
+  - libcap
+  - ncurses
+  - gdbm-devel
+  - glibc-devel
+  - createrepo
+  - python-devel
+  - openssl-devel
+  - libGL-devel
+  - MariaDB-server
+  - MariaDB-client
+  - mysql-bench
+  - mysql-devel
