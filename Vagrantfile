@@ -14,11 +14,14 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       v.customize ["modifyvm", :id, "--memory", "512"]
       v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
       v.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
+      v.customize ["modifyvm", :id, "--ioapic", "on"]
+      v.customize ["modifyvm", :id, "--cpus", "1"]
       v.name = "WEB"
     end
     web.vm.network :private_network, ip: "192.168.56.10"
     web.vm.hostname = "web.stack.local"
-    web.vm.synced_folder ".", "/vagrant", type: "nfs"
+    web.vm.synced_folder ".", "/vagrant", type: "nfs", nfs_udp: false
+    web.vm.provision :shell, inline: "if [ ! $(grep single-request-reopen /etc/sysconfig/network) ]; then echo RES_OPTIONS=single-request-reopen >> /etc/sysconfig/network && service network restart; fi"
   end
 
   config.vm.define :nfs do |nfs|
