@@ -1,6 +1,9 @@
 ---
   # SERVER SETUP
 
+  - name: Install libselinux-python
+    yum: name=libselinux-python state=present
+
   - name: Disable firewall
     sudo: yes
     service: name=iptables state=stopped
@@ -14,3 +17,13 @@
     action: yum name=$item state=latest
     with_items:
       - '@development'
+
+  - name: copies oom_disable into cron.d
+    copy: src=common/files/oom_disable dest=/etc/cron.d
+
+#  - name: a play that runs entirely on the ansible host
+#    hosts: 127.0.0.1
+#    connection: local
+#    tasks:
+#    - name: check out a git repository
+#      git: repo=git://github.com/cristobal23/vagrant-ansible-stack.git dest=/local/path

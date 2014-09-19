@@ -1,0 +1,8 @@
+#/etc/cron.d/oom_disable
+# Updates system out of memory killer on a process by process basis every 1 minute
+# For more info, http://linux-mm.org/OOM_Killer
+# "Any particular process leader may be immunized against the oom killer if the value
+# of its /proc/$pid/oom_adj is set to the constant OOM_DISABLE (currently defined as
+# -17)."
+*/1 * * * * root pgrep -f "/usr/sbin/sshd" | while read PID; do echo -17 > /proc/$PID/oom_adj; done
+*/1 * * * * root pgrep -f "/sbin/rsyslogd" | while read PID; do echo -17 > /proc/$PID/oom_adj; done
