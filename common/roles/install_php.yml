@@ -1,0 +1,23 @@
+---
+# These tasks install php modules.
+- name: Download Remi repo.
+  get_url: url=http://rpms.famillecollet.com/enterprise/remi-release-6.rpm dest=/tmp/
+
+- name: Install Remi repo.
+  command: rpm -Uvh --force /tmp/remi-release-6.rpm creates=/etc/yum.repos.d/remi.repo
+
+# We need to install everything from remi repository
+- name: Install php
+  yum: name={{ item }} enablerepo=epel,remi state=present
+  with_items:
+   - php
+   - php-mysql
+
+- name: Configure PHP
+  template: src=common/files/php.ini dest=/etc/php.ini
+
+- name: http service state
+  service: name=httpd state=started enabled=yes
+
+- name: Install PHP Composer
+  shell: curl -sS https://getcomposer.org/installer | /usr/bin/php && /bin/mv -f /home/vagrant/composer.phar /usr/local/bin/composer creates=/usr/local/bin/composer

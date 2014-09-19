@@ -4,6 +4,9 @@
   - name: Install libselinux-python
     yum: name=libselinux-python state=present
 
+  - name: Install libselinux-python
+    yum: name=libsemanage-python state=present
+
   - name: Disable firewall
     sudo: yes
     service: name=iptables state=stopped

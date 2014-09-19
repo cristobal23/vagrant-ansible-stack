@@ -1,0 +1,52 @@
+---
+- hosts: log.stack.local
+  vars_files:
+    - common/vars.yml
+
+  gather_facts: true
+  sudo: true
+  
+  tasks:
+  # PREPARE FOR PROVISIONING
+  - include: common/roles/setup.yml
+  # INSTALL APACHE
+  - include: common/roles/install_httpd.yml
+  # INSTALL ELASTIC SEARCH LOGSTASH AND KIBANA
+  - name: copy elasticsearch config
+    template: src=roles/log/files/config.js dest=~/config.js owner=vagrant group=vagrant
+
+  - name: elasticsearch rpm key
+    rpm_key: state=present key=http://packages.elasticsearch.org/GPG-KEY-elasticsearch
+
+  - name: copy elasticsearch repo
+    copy: src=roles/log/files/elasticsearch.repo dest=/etc/yum.repos.d/elasticsearch.repo owner=root group=root
+
+  - name: copy logstash repo
+    copy: src=roles/log/files/logstash.repo dest=/etc/yum.repos.d/logstash.repo owner=root group=root
+
+  - name: Install logging tools
+    yum: pkg={{ item }} state=installed
+    with_items:
+      - logstash
+      - elasticsearch
+
+  - name: get kibana
+    shell: wget https://download.elasticsearch.org/kibana/kibana/kibana-3.0.1.tar.gz
+
+  - name: untar kibana
+    shell: tar -xzf kibana-3.0.1.tar.gz
+
+  - name: copy untared contents to /var/www/html
+    shell: cp -R kibana-3.0.1 /var/www/html/
+
+#  - name: copy elasticsearch config
+#    template: src=files/config.js dest=/var/www/html/kibana-3.0.1/config.js owner=root group=root
+#
+#  - name: elasticsearch plugin
+#    shell: /usr/share/elasticsearch/bin/plugin -install lmenezes/elasticsearch-kopf
+#
+#  - name: copy logstash.conf
+#    copy: src=files/logstash.conf dest=/etc/logstash/conf.d/logstash.conf owner=root group=root
+#
+#  - name: restart logstash
+#    service: name=logstash state=restarted
