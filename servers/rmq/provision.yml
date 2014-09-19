@@ -1,40 +1,29 @@
 ---
-- hosts: rmq
-  vars_files:
-    - vars.yml
-  gather_facts: true
+# RABBITMQ SETUP
 
-  tasks:
+- name: Install packages unique to rmq
+  sudo: yes
+  yum: pkg={{ item }} state=installed
+  with_items: ${rmq_packages}
 
-# PREPARE FOR PROVISIONING
+- name: Install erlang
+  sudo: yes
+  script: scripts/install_erlang.sh
 
-  - include: common/roles/setup.yml
+- name: Install rabbitmq and place rabbitmq-env.conf in var/lib
+  script: scripts/install_rabbitmq.sh
 
-# SERVER SETUP
+- name: Install rabbitmq-env.conf in etc/rabbit
+  copy: src=files/rabbitmq-env.conf dest=/etc/rabbitmq/rabbitmq-env.conf owner=root group=root
 
-  - name: Install packages unique to rmq
-    sudo: yes
-    yum: pkg={{ item }} state=installed
-    with_items: ${rmq_packages}
+- name: Install rabbitmq.config
+  copy: src=files/rabbitmq.config dest=/etc/rabbitmq/rabbitmq.config owner=root group=root
 
-  - name: Install erlang
-    sudo: yes
-    script: scripts/install_erlang.sh
+- name: Install rmqdefinitions.json
+  copy: src=files/rmqdefinitions.json dest=/etc/rabbitmq/rmqdefinitions.json owner=root group=root
 
-  - name: Install rabbitmq and place rabbitmq-env.conf in var/lib
-    script: scripts/install_rabbitmq.sh
+- name: Install rabbitmqadmin cli
+  copy: src=files/rabbitmqadmin dest=/usr/bin/rabbitmqadmin owner=root group=root mode=0777
 
-  - name: Install rabbitmq-env.conf in etc/rabbit
-    copy: src=files/rabbitmq-env.conf dest=/etc/rabbitmq/rabbitmq-env.conf owner=root group=root
-
-  - name: Install rabbitmq.config
-    copy: src=files/rabbitmq.config dest=/etc/rabbitmq/rabbitmq.config owner=root group=root
-
-  - name: Install rmqdefinitions.json
-    copy: src=files/rmqdefinitions.json dest=/etc/rabbitmq/rmqdefinitions.json owner=root group=root
-
-  - name: Install rabbitmqadmin cli
-    copy: src=files/rabbitmqadmin dest=/usr/bin/rabbitmqadmin owner=root group=root mode=0777
-
-  - name: restart rabbitmq
-    service: name=rabbitmq-server state=restarted
+- name: restart rabbitmq
+  service: name=rabbitmq-server state=restarted

@@ -1,16 +1,5 @@
 ---
-- hosts: nfs
-  vars_files:
-    - vars.yml
-  gather_facts: true
-
-  tasks:
-
-# PREPARE FOR PROVISIONING
-
-  - include: common/roles/setup.yml
-
-# SERVER SETUP
+# NFS SERVER SETUP
 
   - name: Install packages unique to nfs
     sudo: yes

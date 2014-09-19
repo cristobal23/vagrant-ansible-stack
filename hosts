@@ -21,3 +21,7 @@
 
 [sql.stack.local]
 192.168.56.40
+
+[log]
+
+[log.stack.local]
