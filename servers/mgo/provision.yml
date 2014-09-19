@@ -1,0 +1,18 @@
+---
+  # INSTALL MONGO
+
+  - name: Install epel-release-6-8.noarch.rpm
+    yum: name=http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm state=present
+  
+  - name: copy mongo config to /etc/yum.repos.d/mongodb.repo
+    copy: src=roles/mongo/files/10gen.repo dest=/etc/yum.repos.d/mongodb.repo
+  
+  - name: Install MongoDB.
+    yum: pkg={{ item }} state=installed
+    with_items: mongo_packages
+    
+  - name: Start mongo service
+    shell: service mongod start
+
+  - name: Start mongo automatically on restart
+    shell: chkconfig mongod on

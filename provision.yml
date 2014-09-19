@@ -1,7 +1,16 @@
 ---
 # Main deployment playbook. Deploys whole stack of servers.
+- hosts: web.stack.local
+  vars_files:
+    - servers/web/vars.yml
 
-- include: servers/web/provision.yml
-- include: servers/nfs/provision.yml
-- include: servers/rmq/provision.yml
-- include: servers/sql/provision.yml
+  gather_facts: true
+  sudo: true
+
+  tasks:
+  # PREPARE FOR PROVISIONING
+  - include: common/roles/setup.yml
+  # INSTALL APACHE
+  - include: common/roles/install_httpd.yml
+  # INSTALL FRONT-END PACKAGES
+  - include: servers/web/provision.yml
