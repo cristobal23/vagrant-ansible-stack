@@ -1,0 +1,88 @@
+{
+    "rabbit_version": "3.1.5",
+    "users": [
+        {
+            "name": "guest",
+            "password_hash": "t9+PbIHsF9NQ69NGQatMT/VdVCk=",
+            "tags": "monitoring"
+        },
+        {
+            "name": "admin",
+            "password_hash": "04fmcD54KpY4eScGEbr4OG/MkMA=",
+            "tags": "administrator"
+        }
+    ],
+    "vhosts": [
+        {
+            "name": "/"
+        }
+    ],
+    "permissions": [
+        {
+            "user": "admin",
+            "vhost": "/",
+            "configure": ".*",
+            "write": ".*",
+            "read": ".*"
+        },
+        {
+            "user": "guest",
+            "vhost": "/",
+            "configure": "",
+            "write": ".*",
+            "read": ".*"
+        }
+    ],
+    "parameters": [],
+    "policies": [],
+    "queues": [
+        {
+            "name": "error",
+            "vhost": "/",
+            "durable": true,
+            "auto_delete": false,
+            "arguments": {}
+        },
+        {
+            "name": "master",
+            "vhost": "/",
+            "durable": true,
+            "auto_delete": false,
+            "arguments": {}
+        },
+        {
+            "name": "notify",
+            "vhost": "/",
+            "durable": true,
+            "auto_delete": false,
+            "arguments": {}
+        }
+    ],
+    "exchanges": [],
+    "bindings": [
+        {
+            "source": "amq.direct",
+            "vhost": "/",
+            "destination": "error",
+            "destination_type": "queue",
+            "routing_key": "error",
+            "arguments": {}
+        },
+        {
+            "source": "amq.direct",
+            "vhost": "/",
+            "destination": "master",
+            "destination_type": "queue",
+            "routing_key": "master",
+            "arguments": {}
+        },
+        {
+            "source": "amq.direct",
+            "vhost": "/",
+            "destination": "notify",
+            "destination_type": "queue",
+            "routing_key": "notify",
+            "arguments": {}
+        }
+    ]
+}
