@@ -14,3 +14,16 @@
   - include: common/roles/install_httpd.yml
   # INSTALL FRONT-END PACKAGES
   - include: servers/web/provision.yml
+
+- hosts: rmq.stack.local
+  vars_files:
+    - servers/rmq/vars.yml
+
+  gather_facts: true
+  sudo: true
+
+  tasks:
+  # PREPARE FOR PROVISIONING
+  - include: common/roles/setup.yml
+  # INSTALL RABBITMQ PACKAGES
+  - include: servers/rmq/provision.yml
