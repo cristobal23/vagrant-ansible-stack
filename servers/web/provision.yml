@@ -6,7 +6,7 @@
 - name: Install packages unique to www
   sudo: yes
   yum: pkg={{ item }} state=installed
-  with_items: ${web_packages}
+  with_items: '{{ web_packages }}'
 
 #- description: Install "grunt" node.js package globally.
 #  npm: name=grunt-cli global=yes
