@@ -17,9 +17,7 @@
 
   - name: Install development tools
     sudo: yes
-    action: yum name=$item state=latest
-    with_items:
-      - '@development'
+    yum: name="@Development tools" state=present
 
   - name: copies oom_disable into cron.d
     copy: src=common/files/oom_disable dest=/etc/cron.d
